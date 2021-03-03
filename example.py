@@ -4,25 +4,24 @@ import pybullet as p
 
 import time
 
-# p.GUI for graphical version similar to the MuJoCo one
-# it will shut down on my pc though
 p.connect(p.DIRECT)
 
 # check the link below for some common environments
 # https://github.com/bulletphysics/bullet3/releases
-env = gym.make('AntBulletEnv-v0')
+# multi-agent envs: https://github.com/koulanurag/ma-gym
+# env = gym.make('AntBulletEnv-v0')
+# env = gym.make('AsteroidsNoFrameskip-v4')
+# env = gym.make('CartPole-v0')
+env = gym.make('ma_gym:Combat-v0')
 
-# it is different from how MuJoCo renders environments
-# it doesn't differ too much to me w/ and w/o mode='human'
-env.render()
-
-# you should call render() before reset()
-env.reset()
-
-for _ in range(10000):
-	# call sleep() so that it can render at a normal speed
-	time.sleep(1./60.)
-	action = env.action_space.sample()
-	obs, reward, done, _ = env.step(action)
-	if done:
-		break
+for _ in range(10):
+    env.reset()
+    # for _ in range(1000000):
+    for _ in range(1000):
+        env.render()
+        action = env.action_space.sample()
+        obs, reward, done, _ = env.step(action)
+        time.sleep(1/60)
+        if done:
+            break
+    print(reward)

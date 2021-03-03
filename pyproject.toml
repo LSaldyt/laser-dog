@@ -7,7 +7,8 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-gym = "^0.18.0"
+gym = {extras = ["atari"], version = "^0.18.0"}
+ma-gym = "^0.0.5"
 pybullet = "^3.0.8"
 pybullet-rendering = "^0.6.5"
 pybullet-planning = "^0.5.1"
