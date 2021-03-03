@@ -6,13 +6,15 @@ import time
 
 p.connect(p.DIRECT)
 
-# check the link below for some common environments
+# Possible Environments
+
 # https://github.com/bulletphysics/bullet3/releases
 # multi-agent envs: https://github.com/koulanurag/ma-gym
 # env = gym.make('AntBulletEnv-v0')
 # env = gym.make('AsteroidsNoFrameskip-v4')
-# env = gym.make('CartPole-v0')
-env = gym.make('ma_gym:Combat-v0')
+# env = gym.make('ma_gym:Combat-v0')
+
+env = gym.make('CartPole-v0')
 
 for _ in range(10):
     env.reset()
