@@ -1,0 +1,3 @@
+[submodule "rex-gym"]
+	path = rex-gym
+	url = https://github.com/nicrusso7/rex-gym
