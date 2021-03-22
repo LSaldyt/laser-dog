@@ -15,7 +15,7 @@ First, start by downloading the repository:
 If the repository is already cloned, use `git submodule update --init --recursive` to update git submodules.
 
 To install packages using [poetry](https://python-poetry.org):  
-`pip install poetry` or `pip3 install poetry`
+`pip install poetry` or `pip3 install poetry`  
 `poetry update`  
 `poetry install`  
 `poetry run rex-gym policy --env walk`
