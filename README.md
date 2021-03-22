@@ -11,7 +11,7 @@ Full dependencies are specified with the [poetry](https://python-poetry.org) pac
 ## Commands:  
 
 First, start by downloading the repository:  
-`git clone --recurse-submodules https://github.com/LSaldyt/spot-micro-reinforcement-learning`
+`git clone --recurse-submodules https://github.com/LSaldyt/spot-micro-reinforcement-learning`  
 If the repository is already cloned, use `git submodule update --init --recursive` to update git submodules.
 
 To install packages using [poetry](https://python-poetry.org):  
@@ -20,8 +20,9 @@ To install packages using [poetry](https://python-poetry.org):
 `poetry install`  
 `poetry run rex-gym policy --env walk`
 
-Ideally, use the `pip` command associated with a `python3.7` install. Otherwise, you will have to use `poetry env use /full/path/to/python` and point to your `python3.7` binary. 
-On linux, this path is typically `/usr/bin/python3.7`, so the full command to get setup is `poetry env use /usr/bin/python3.7`.
+Ideally, use the `pip` command associated with a `python3.7` install.  
+Otherwise, you will have to use `poetry env use /full/path/to/python` and point to your `python3.7` binary.  
+On linux, this path is typically `/usr/bin/python3.7`, so the full command to get setup is `poetry env use /usr/bin/python3.7`.  
 
 For example, installing `python3.7` specifically might look like this on Ubuntu:  
 `sudo apt update`  
@@ -30,8 +31,9 @@ After completing this, the `/usr/bin/python3.7` binary should be present.
 
 ## What to run:
 
-See the [rex-gym](rex-gym/README.md) instructions for full details.
-For example, use `poetry run rex-gym policy --env gallop` to run a pre-trained gallop policy, or use `poetry run rex-gym train --playground True --env gallop --log-dir logs` to run a GUI-based training session.  
+See the [rex-gym](https://github.com/nicrusso7/rex-gym/blob/master/README.md) instructions for full details.  
+For example, use `poetry run rex-gym policy --env gallop` to run a pre-trained gallop policy.  
+Use `poetry run rex-gym train --playground True --env gallop --log-dir logs` to run a GUI-based training session.  
 To run a faster headless session, use `poetry run rex-gym train --env gallop --log-dir logs`  
 
 ### Possible environments:
