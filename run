@@ -1,2 +1,2 @@
 #!/bin/bash
-poetry run python example.py
+poetry run rex-gym policy --env walk
