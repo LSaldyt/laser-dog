@@ -4,7 +4,6 @@ from time import sleep
 
 address = '3C:61:05:3D:EB:2A'
 
-
 def main():
     service = bluetooth.find_service(address=address)
 
@@ -19,10 +18,14 @@ def main():
 
     socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
     socket.connect((host, port))
+    socket.settimeout(0.1)
     try:
         while True:
-            socket.send(input())
-            print(socket.recv(1024))
+            try:
+                socket.send(input())
+                print(socket.recv(1024))
+            except bluetooth.btcommon.BluetoothError:
+                pass
     finally:
         socket.close()
 
