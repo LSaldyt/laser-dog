@@ -1,0 +1,21 @@
+# Emperical notes on hardware robot
+
+# Front left
+Servo 0: Non-function
+Servo 1: Rest @ 360, bigger = closer to rest
+Servo 2: Rest @ 270, bigger = closer to rest
+
+# Front right
+Servo 3: Rest @ 320, bigger = closer to rest
+Servo 4: Rest @ 380, bigger = closer to rest
+Servo 5: Rest @ 300, bigger = further from rest
+
+# Back left
+Servo 6: Rest @ 70, bigger = further from rest
+Servo 7: Rest @ 310, bigger = closer to rest
+Servo 8: Rest @ 220, bigger = closer to rest
+
+# Back right
+Servo 9: Rest @ 460, bigger = closer to rest
+Servo 10: Rest @ 330, bigger = further from rest
+Servo 11: Rest @ 200, ??
