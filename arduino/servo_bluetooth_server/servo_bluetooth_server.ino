@@ -24,6 +24,8 @@ MyCommandParser servoCommandParser;
 int pulse = 170;
 int servo_id = 0;
 
+int all_servos[12] = {200, 360, 270, 320, 280, 300, 700, 310, 220, 460, 200};
+
 // the setup function runs once when you press reset or power the board
 void setup() {
 
@@ -38,24 +40,15 @@ void setup() {
   Serial.println("The device started, now you can pair it with bluetooth!");
 
   while (!Serial);
-
-  // The following are the initial positions of the servos
-  // This comes from emperical calibration.
-  PWM.setPWM(1,  0, 360);
-  PWM.setPWM(2,  0, 270);
-  PWM.setPWM(3,  0, 320);
-  PWM.setPWM(4,  0, 380);
-  PWM.setPWM(5,  0, 300);
-  PWM.setPWM(6,  0,  70);
-  PWM.setPWM(7,  0, 310);
-  PWM.setPWM(8,  0, 220);
-  PWM.setPWM(9,  0, 460);
-  PWM.setPWM(10, 0, 330);
-  PWM.setPWM(11, 0, 200);
   
-  servoCommandParser.registerCommand("s", "uu", &cmd_servo);
+  bool result = servoCommandParser.registerCommand("s", "uu", &cmd_servo);
+  Serial.println(result);
   Serial.println("registered command: s <uint64> <uint64> ");
   Serial.println("example: s 0 150");
+  bool test = servoCommandParser.registerCommand("c", "uuuuuuuuuuuu", &cmd_servos);
+  Serial.println(test);
+  Serial.println("registered command: c <uint64>*12");
+  Serial.println("example: c 120 120 120 120 120 120 120 120 120 120 120 120");
   servoCommandParser.registerCommand("sleep", "", &servosSleep);
   Serial.println("registered command: sleep ");
   servoCommandParser.registerCommand("wake", "", &servosWake);
@@ -65,7 +58,6 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  delay(100);                       // wait
   if (checkBluetoothInput())
     writePWM();
 }
@@ -76,10 +68,18 @@ void cmd_servo(MyCommandParser::Argument *args, char *response) {
   strlcpy(response, "success", MyCommandParser::MAX_RESPONSE_SIZE);
 }
 
+void cmd_servos(MyCommandParser::Argument *args, char *response) {
+  for (int i = 0; i <= 11; i++) {
+      all_servos[i] = args[i].asInt64;
+  }
+  strlcpy(response, "success", MyCommandParser::MAX_RESPONSE_SIZE);
+}
+
+
 bool checkBluetoothInput(){
   if (SerialBT.available()) {
-    char line[128];
-    size_t lineLength = SerialBT.readBytesUntil('\n', line, 127);
+    char line[256];
+    size_t lineLength = SerialBT.readBytesUntil('\n', line, 255);
     line[lineLength - 1] = '\0'; // Yikes
 
     Serial.printf("\"");
