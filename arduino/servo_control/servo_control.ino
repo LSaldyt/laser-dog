@@ -33,11 +33,22 @@ void setup() {
   PWM.setPWMFreq(50);
 
   Serial.begin(115200);
-  PWM.setPWM(0, 0, 150);
   Serial.println("Starting!!!");
 
   while (!Serial);
-
+  
+  PWM.setPWM(1,  0, 360);
+  PWM.setPWM(2,  0, 270);
+  PWM.setPWM(3,  0, 320);
+  PWM.setPWM(4,  0, 380);
+  PWM.setPWM(5,  0, 300);
+  PWM.setPWM(6,  0,  70);
+  PWM.setPWM(7,  0, 310);
+  PWM.setPWM(8,  0, 220);
+  PWM.setPWM(9,  0, 460);
+  PWM.setPWM(10, 0, 330);
+  PWM.setPWM(11, 0, 200);
+  
   servoCommandParser.registerCommand("s", "uu", &cmd_servo);
   Serial.println("registered command: s <uint64> <uint64> ");
   Serial.println("example: s 0 150");
