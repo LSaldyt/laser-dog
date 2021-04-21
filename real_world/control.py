@@ -71,8 +71,8 @@ from bt_serial import initialize
 initial_pulse = [200, 340, 280, 320, 380, 300, 155, 310, 240, 460, 330, 190]
 initial_rad   = [1.99, 0, -1.355] * 4
 # cal_mask      = [0.012, 0.112, 0.009] * 4
-cal_mask      = [0.015] * 12
-cal_mask      = [0.005] * 12
+# cal_mask      = [0.015] * 12
+cal_mask      = [0.008] * 12 # Universal PWM:Radian Ratio
 
 direction = [True,  True, False,
              True, False, True,
@@ -112,22 +112,36 @@ def communicate(socket, target):
     for servo_i, setting in enumerate(target):
         socket.send(b's ' + str(servo_i).encode('utf-8') + b' ' + str(setting).encode('utf-8') + b' \n')
 
+def rest_stand(i):
+    if i % 2 == 0:
+        signal = [0, -0.886, 1.3] * 4  # Standing position
+    else:
+        signal = [0, -1.355, 1.99] * 4 # Rest position
+    return signal
+
+walk_raw = []
+with open('walk_raw.txt', 'r') as infile:
+    for line in infile:
+        walk_raw.append([float(x) for x in line.split(' ') if len(x.strip()) > 0])
+
+def copy_walk(i):
+    return walk_raw[i % len(walk_raw)]
+
+def rest(i):
+    return [0, -1.355, 1.99] * 4 # Rest position
+
 def main():
     verify()
     socket = initialize(address='3C:61:05:30:37:56')
     try:
-        i = 0
-        while True:
-            i += 1
-            if i % 2 == 0:
-                signal = [0, -0.886, 1.3] * 4  # Standing position
-            else:
-                signal = [0, -1.355, 1.99] * 4 # Rest position
+        for i in range(10000000):
+            # signal = rest_stand(i)
+            signal = copy_walk(i)
+            # signal = rest(i)
             print(signal)
             target = convert(signal)
             print(target)
             communicate(socket, target)
-            sleep(1)
     finally:
         socket.close()
 

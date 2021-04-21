@@ -1,3 +1,2 @@
 #!/bin/bash
-# poetry run rex-gym policy --env walk
-poetry run rex-gym policy --env standup
+poetry run rex-gym policy --env walk
