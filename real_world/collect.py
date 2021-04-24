@@ -13,7 +13,7 @@ def extract(buff):
         for chunk in chunks:
             parts = chunk.split(b',')
             try:
-                raw = [struct.unpack('f', x)[0] if len(x) == 4 else x
+                raw = [struct.unpack('f', x)[0] if len(x) == 4 else ord(x)
                        for x in parts if len(x) > 0]
                 if raw:
                     result.append(raw)
