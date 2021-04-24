@@ -4,13 +4,6 @@
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
-#include <NewPing.h>
-#define TRIGGER_PIN  4  // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN     5  // Arduino pin tied to echo pin on the ultrasonic sensor.
-#define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
-
-#define PUSHED 15
-
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
@@ -18,15 +11,12 @@
 Adafruit_MPU6050 mpu;
 int pushed = 0;
 
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 BluetoothSerial SerialBT;
 
 void setup() {
   Serial.begin(115200);
-  SerialBT.begin("ESP32test"); //Bluetooth device name
+  SerialBT.begin("SpotRobotCollect"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
-
-  pinMode(PUSHED, INPUT);
   
   // Try to initialize!
   if (!mpu.begin()) {
@@ -117,26 +107,12 @@ void loop() {
   delay(50);                      // Wait 50ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
   sensors_event_t a, g, temp;     // Get an IMU ping
   mpu.getEvent(&a, &g, &temp);
-  unsigned int uS = sonar.ping(); // Send ping, get ping time in microseconds (uS).
-  Serial.print("Ping: ");
-  float cm = sonar.convert_cm(uS);
-  Serial.print(cm); // Convert ping time to distance and print result (0 = outside set distance range, no ping echo)
-  Serial.println("cm");
-
-  pushed = digitalRead(PUSHED);
-  Serial.println(pushed);
   
-  BT_log(cm);
-
-
   BT_log(a.acceleration.x);
   BT_log(a.acceleration.y);
   BT_log(a.acceleration.z);
   BT_log(g.gyro.x);
   BT_log(g.gyro.y);
   BT_log(g.gyro.z);
-  SerialBT.write(pushed);
-  Serial.println("");
   SerialBT.write(0x0a);
-  delay(500);
 }

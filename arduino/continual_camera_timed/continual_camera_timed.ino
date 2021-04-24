@@ -14,7 +14,7 @@
 // Edit ssid, password, capture_interval:
 const char* ssid = "no";
 const char* password = "no";
-int capture_interval = 1000; // microseconds between captures
+int capture_interval = 100; // microseconds between captures
 //
 
 long current_millis;

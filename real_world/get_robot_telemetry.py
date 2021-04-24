@@ -8,11 +8,11 @@ from bt_serial import initialize
 from collect import extract
 
 def main():
-    headers = 'timestamp,cm,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z,laser (1=off 0=on)'
+    headers = 'timestamp,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z'
     buff = b''
-    socket = initialize(address='3C:61:05:3D:EB:2A')
+    socket = initialize(address='3C:61:05:30:37:56')
     try:
-        with open('raw_data.csv', 'w') as outfile:
+        with open('robot_data.csv', 'w') as outfile:
             outfile.write(headers)
             while True:
                 try:
@@ -25,8 +25,8 @@ def main():
                         line = [t] + line
                         outfile.write(','.join(map(str, line)) + '\n')
                     sleep(1)
-                except bluetooth.btcommon.BluetoothError:
-                    pass
+                except bluetooth.btcommon.BluetoothError as e:
+                    print(e)
     finally:
         socket.close()
 
