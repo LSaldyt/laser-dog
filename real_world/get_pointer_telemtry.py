@@ -5,24 +5,7 @@ from time import sleep, time
 
 from bt_serial import initialize
 
-def extract(buff):
-    result = []
-    if b'\n' in buff:
-        chunks = buff.split(b'\n')
-        buff = chunks[-1]
-        for chunk in chunks:
-            parts = chunk.split(b',')
-            try:
-                raw = [struct.unpack('f', x)[0]
-                       for x in parts if len(x) > 0]
-                if raw:
-                    result.append(raw)
-            except Exception as e:
-                print(e)
-                print(parts)
-                print([len(p) for p in parts])
-    return result, buff
-
+from collect import extract
 
 def main():
     headers = 'timestamp,cm,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z,laser (1=off 0=on)'

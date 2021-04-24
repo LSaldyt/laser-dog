@@ -9,11 +9,14 @@
 #define ECHO_PIN     5  // Arduino pin tied to echo pin on the ultrasonic sensor.
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 
+#define PUSHED 15
+
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
 Adafruit_MPU6050 mpu;
+int pushed = 0;
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 BluetoothSerial SerialBT;
@@ -22,6 +25,9 @@ void setup() {
   Serial.begin(115200);
   SerialBT.begin("ESP32test"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
+
+  pinMode(PUSHED, INPUT);
+  
   // Try to initialize!
   if (!mpu.begin()) {
     Serial.println("Failed to find MPU6050 chip");
@@ -116,6 +122,10 @@ void loop() {
   float cm = sonar.convert_cm(uS);
   Serial.print(cm); // Convert ping time to distance and print result (0 = outside set distance range, no ping echo)
   Serial.println("cm");
+
+  pushed = digitalRead(PUSHED);
+  Serial.println(pushed);
+  
   BT_log(cm);
 
 
@@ -125,7 +135,7 @@ void loop() {
   BT_log(g.gyro.x);
   BT_log(g.gyro.y);
   BT_log(g.gyro.z);
-  BT_float(temp.temperature);
+  BT_float(pushed);
   Serial.println("");
   SerialBT.write(0x0a);
   delay(500);

@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "Erasing flash at $1"
+sleep 3
+esptool.py --chip esp32 --port $1 --baud 115200 --before default_reset --after hard_reset erase_flash

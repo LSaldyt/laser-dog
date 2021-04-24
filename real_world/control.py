@@ -68,13 +68,27 @@ from bt_serial import initialize
 # Emperical rest positions in servo pulse width
 # Order: Leg, Shoulder, Knee
 #                0    1    2  * 3    4    5  * 6   7    8  * 9    10   11
-initial_pulse = [200, 340, 280, 320, 380, 300, 155, 310, 240, 460, 330, 190]
+initial_pulse = [90, 340, 280, 320, 380, 300, 155, 310, 240, 460, 330, 190]
 initial_rad   = [1.99, 0, -1.355] * 4
 # cal_mask      = [0.012, 0.112, 0.009] * 4
 # cal_mask      = [0.015] * 12
-cal_mask      = [0.008] * 12 # Universal PWM:Radian Ratio
+# cal_mask      = [0.004, 0.006, 0.006] * 2 + [0.003, 0.006, 0.006] * 2 # Universal PWM:Radian Ratio
+# cal_mask      = [0.004] * 12
+# cal_mask      = [0.002, 0.006, 0.006] * 4
+cal_mask = [0.006, # Front left leg
+            0.006, # Front left shoulder
+            0.006, # Front left knee
+            0.006, # Front right leg
+            0.006, # Front right shoulder
+            0.006, # Front right knee
+            0.003, # Back left leg
+            0.006, # Back left shoulder
+            0.006, # Back left knee
+            0.003, # Back right leg
+            0.006, # Back right shoulder
+            0.006] # Back right knee
 
-direction = [True,  True, False,
+direction = [False,  True, False,
              True, False, True,
              False,  False, False,
              True, True, True]
@@ -119,13 +133,23 @@ def rest_stand(i):
         signal = [0, -1.355, 1.99] * 4 # Rest position
     return signal
 
-walk_raw = []
-with open('walk_raw.txt', 'r') as infile:
-    for line in infile:
-        walk_raw.append([float(x) for x in line.split(' ') if len(x.strip()) > 0])
+raw_files = ['walk_raw.txt', 'turn_raw.txt']
+
+raw_runs = dict()
+for fname in raw_files:
+    raw = []
+    with open(fname, 'r') as infile:
+        for line in infile:
+            raw.append([float(x) for x in line.split(' ') if len(x.strip()) > 0])
+    raw_runs[fname.split('.')[0]] = raw
 
 def copy_walk(i):
+    walk_raw = raw_runs['walk_raw']
     return walk_raw[i % len(walk_raw)]
+
+def copy_turn(i):
+    turn_raw = raw_runs['turn_raw']
+    return turn_raw[i % len(turn_raw)]
 
 def rest(i):
     return [0, -1.355, 1.99] * 4 # Rest position
@@ -135,13 +159,19 @@ def main():
     socket = initialize(address='3C:61:05:30:37:56')
     try:
         for i in range(10000000):
-            # signal = rest_stand(i)
-            signal = copy_walk(i)
+            signal = rest_stand(i)
+            # signal = copy_walk(i)
+            # signal = copy_turn(i)
             # signal = rest(i)
+            signal = [0, -1.355 + 3.1415/2, 1.99 + 3.1415/2] * 4
+
+            print(i)
             print(signal)
             target = convert(signal)
             print(target)
             communicate(socket, target)
+            # sleep(0.001)
+            sleep(1)
     finally:
         socket.close()
 

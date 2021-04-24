@@ -45,10 +45,10 @@ void setup() {
   Serial.println(result);
   Serial.println("registered command: s <uint64> <uint64> ");
   Serial.println("example: s 0 150");
-  bool test = servoCommandParser.registerCommand("c", "uuuuuuuuuuuu", &cmd_servos);
+  bool test = servoCommandParser.registerCommand("c", "uuuuuu", &cmd_servos);
   Serial.println(test);
   Serial.println("registered command: c <uint64>*12");
-  Serial.println("example: c 120 120 120 120 120 120 120 120 120 120 120 120");
+  Serial.println("example: c 120 120 120 120 120 120");
   servoCommandParser.registerCommand("sleep", "", &servosSleep);
   Serial.println("registered command: sleep ");
   servoCommandParser.registerCommand("wake", "", &servosWake);
