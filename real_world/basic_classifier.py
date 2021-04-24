@@ -3,7 +3,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torch
 
-from dataloader import LaserDataset
+from torch.utils.data import DataLoader
+from dataset import LaserDataset
 
 # Copy the tutorial CIFAR-10 classifier, but w/ binary classification
 class Net(nn.Module):
@@ -30,23 +31,27 @@ def main():
 
     # criterion = nn.CrossEntropyLoss()
     criterion = nn.BCELoss()
-    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+    # optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+    # optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
+    optimizer = optim.AdamW(net.parameters(), lr=0.001)
 
     dataset = LaserDataset()
+    train_size = int(len(dataset) * 0.8)
+    train, test = torch.utils.data.random_split(dataset, [train_size,
+                                                          len(dataset) - train_size])
+    train_dataloader = DataLoader(train, batch_size=64, shuffle=True)
+    test_dataloader  = DataLoader(test,  batch_size=64, shuffle=True)
 
     for epoch in range(100):
         total_loss = 0.0
-        for i, data in enumerate(dataset, 0):
+        for i, (inputs, label) in enumerate(train_dataloader):
             print(f'Item: {i}\r', end='')
-            if data is None: # If images are corrupt, skip training on them.
-                continue
-            inputs = data['image']
-            label  = data['laser']
 
             optimizer.zero_grad()
 
             outputs = net(inputs)
             loss = criterion(outputs, label)
+            print(loss)
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
