@@ -56,8 +56,9 @@ def time_to_index(t_event, times):
     return -1
 
 def main():
-    FIRST = 196
+    FIRST = 196 - 1
     DELTA = 0.1
+    THETA_INIT = 77
 
     gyr, acc, t, d, l = from_file('pointer_data.csv')
     theta = get_theta(gyr, acc)
@@ -82,7 +83,7 @@ def main():
             im_time = t_epoch + DELTA * i
             im_index = time_to_index(im_time, t)
 
-            im_theta = theta[im_index]
+            im_theta = theta[im_index] - THETA_INIT
             im_dist  = d[im_index]
             im_laser = 1 - l[im_index]
 
