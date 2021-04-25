@@ -163,7 +163,8 @@ def rest(i):
 
 def main():
     verify()
-    socket = initialize(address='3C:61:05:30:37:56')
+    # socket = initialize(address='3C:61:05:30:37:56')
+    socket = initialize(address='E0:E2:E6:D0:85:3A')
     try:
         for i in range(10000000):
             signal = rest_stand(i)
@@ -177,7 +178,8 @@ def main():
             print(target)
             communicate(socket, target)
             # sleep(0.001)
-            sleep(3)
+            # sleep(0.05)
+            sleep(5)
     finally:
         socket.close()
 
