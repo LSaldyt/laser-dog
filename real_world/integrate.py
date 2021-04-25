@@ -2,6 +2,7 @@ from ahrs.filters import Madgwick
 from pyquaternion import Quaternion
 import numpy as np
 from pprint import pprint
+from math import degrees, atan2
 import os
 
 def from_file(fname):
@@ -43,8 +44,11 @@ def get_theta(gyr, acc):
     for n in range(1, len(gyr) + 1):
         try:
             nl = null()
-            qw = get_qw(gyr[:n], acc[:n])
-            theta.append(qw.degrees)
+            q = get_qw(gyr[:n], acc[:n])
+            qw, qx, qy, qz = q.elements
+            yaw = atan2(2.0*(qy*qz + qw*qx), qw*qw - qx*qx - qy*qy + qz*qz)
+            theta.append(degrees(yaw))
+            print(degrees(yaw) - 77)
         except ValueError:
             pass
     return theta
