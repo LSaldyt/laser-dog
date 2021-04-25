@@ -7,17 +7,20 @@ from torch.utils.data import DataLoader
 from dataset import LaserDataset
 
 # Copy the tutorial CIFAR-10 classifier, but w/ binary classification
-class Net(nn.Module):
-    def __init__(self):
+class LaserNet(nn.Module):
+    def __init__(self, reduction=8):
         super().__init__()
+        self.samp = nn.AvgPool2d(reduction, stride=reduction)
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(1886544, 120) # 1886544 established based on image size
+        # self.fc1 = nn.Linear(111744, 120) # established based on image size
+        self.fc1 = nn.Linear(25568, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 1) # 1 output for binary classification task
 
     def forward(self, x):
+        x = self.samp(x)
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1)
@@ -27,7 +30,7 @@ class Net(nn.Module):
         return x
 
 def main():
-    net = Net()
+    net = LaserNet()
 
     # For binary classification, use BCELoss (needs replacing for regression or multi-class)
     criterion = nn.BCELoss()
