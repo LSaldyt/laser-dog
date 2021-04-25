@@ -41,7 +41,7 @@ def main():
                         print(line)
                         line = [t] + line
                         outfile.write(','.join(map(str, line)) + '\n')
-                    sleep(1)
+                    sleep(0.1)
                 except bluetooth.btcommon.BluetoothError:
                     pass
     finally:
