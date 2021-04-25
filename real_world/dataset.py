@@ -19,6 +19,7 @@ class LaserDataset(Dataset):
         self.labels = pd.read_csv(csv_file)
         self.root_dir = root_dir
         self.transform = transform
+        self.kind = kind
 
         # Filter corrupt images ahead of time
         # Takes a while, but makes training smoother
@@ -49,11 +50,11 @@ class LaserDataset(Dataset):
           classifier = laser on/off
           regressor  = theta & distance
         '''
-        if kind == 'classifier':
+        if self.kind == 'classifier':
             laser = self.labels.iloc[idx, 4:5]
             laser = torch.from_numpy(np.array(laser, dtype=np.int16))
             label = laser.float()
-        elif kind = 'regressor':
+        elif self.kind == 'regressor':
             reg = self.labels.iloc[idx, 2:4]
             reg = torch.from_numpy(np.array(reg, dtype=np.float32))
             label = reg.float()

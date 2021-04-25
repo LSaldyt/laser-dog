@@ -21,10 +21,12 @@ Adafruit_PWMServoDriver PWM = Adafruit_PWMServoDriver(PWM_SERVO_ADDR);
 
 typedef CommandParser<> MyCommandParser;
 MyCommandParser servoCommandParser;
-int pulse = 170;
 int servo_id = 0;
 
-int all_servos[12] = {200, 360, 270, 320, 280, 300, 700, 310, 220, 460, 200};
+int leg = 0;
+int shoulder = 0;
+int knee = 0;
+bool cmd = false;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -40,15 +42,16 @@ void setup() {
   Serial.println("The device started, now you can pair it with bluetooth!");
 
   while (!Serial);
-  
-  bool result = servoCommandParser.registerCommand("s", "uu", &cmd_servo);
-  Serial.println(result);
-  Serial.println("registered command: s <uint64> <uint64> ");
-  Serial.println("example: s 0 150");
-  bool test = servoCommandParser.registerCommand("c", "uuuuuu", &cmd_servos);
+  ;
+  bool test = servoCommandParser.registerCommand("bl", "uuu", &cmd_bl);
   Serial.println(test);
-  Serial.println("registered command: c <uint64>*12");
-  Serial.println("example: c 120 120 120 120 120 120");
+  test = servoCommandParser.registerCommand("br", "uuu", &cmd_br);
+  Serial.println(test);
+  test = servoCommandParser.registerCommand("fl", "uuu", &cmd_fl);
+  Serial.println(test);
+  test = servoCommandParser.registerCommand("fr", "uuu", &cmd_fr);
+  Serial.println(test);
+  
   servoCommandParser.registerCommand("sleep", "", &servosSleep);
   Serial.println("registered command: sleep ");
   servoCommandParser.registerCommand("wake", "", &servosWake);
@@ -62,29 +65,41 @@ void loop() {
     writePWM();
 }
 
-void cmd_servo(MyCommandParser::Argument *args, char *response) {
-  servo_id = args[0].asInt64;
-  pulse    = args[1].asInt64;
+void load_cmd(MyCommandParser::Argument *args, char *response) {
+  leg      = args[0].asInt64;
+  shoulder = args[1].asInt64;
+  knee     = args[2].asInt64;
+  
   strlcpy(response, "success", MyCommandParser::MAX_RESPONSE_SIZE);
 }
 
-void cmd_servos(MyCommandParser::Argument *args, char *response) {
-  for (int i = 0; i <= 11; i++) {
-      all_servos[i] = args[i].asInt64;
-  }
-  strlcpy(response, "success", MyCommandParser::MAX_RESPONSE_SIZE);
+void cmd_bl(MyCommandParser::Argument *args, char *response) {
+  load_cmd(args, response);
+  servo_id = 6;
 }
 
+void cmd_br(MyCommandParser::Argument *args, char *response) {
+  load_cmd(args, response);
+  servo_id = 9;
+}
+
+void cmd_fl(MyCommandParser::Argument *args, char *response) {
+  load_cmd(args, response);
+  servo_id = 0;
+}
+
+void cmd_fr(MyCommandParser::Argument *args, char *response) {
+  load_cmd(args, response);
+  servo_id = 3;
+}
 
 bool checkBluetoothInput(){
   if (SerialBT.available()) {
     char line[256];
     size_t lineLength = SerialBT.readBytesUntil('\n', line, 255);
-    line[lineLength - 1] = '\0'; // Yikes
+    line[lineLength] = '\0'; // Yikes
 
-    Serial.printf("\"");
     Serial.println(line);
-    Serial.printf("\"");
     char response[MyCommandParser::MAX_RESPONSE_SIZE];
     servoCommandParser.processCommand(line, response);
     Serial.println(response);
@@ -105,7 +120,8 @@ void servosWake(MyCommandParser::Argument *args, char *response) {
 }
 
 void writePWM(){
-  Serial.printf("Servo %d: Pulse %d\n", servo_id, pulse);
-  PWM.setPWM(servo_id, 0, pulse);
+  PWM.setPWM(servo_id, 0, leg);
+  PWM.setPWM(servo_id + 1, 0, shoulder);
+  PWM.setPWM(servo_id + 2, 0, knee);
   
 }

@@ -68,25 +68,25 @@ from bt_serial import initialize
 # Emperical rest positions in servo pulse width
 # Order: Leg, Shoulder, Knee
 #                0    1    2  * 3    4    5  * 6   7    8  * 9    10   11
-initial_pulse = [90, 340, 280, 320, 380, 300, 155, 310, 240, 460, 330, 190]
+initial_pulse = [90, 340, 280, 320, 380, 300, 155, 310, 240, 460, 310, 160]
 initial_rad   = [1.99, 0, -1.355] * 4
 # cal_mask      = [0.012, 0.112, 0.009] * 4
 # cal_mask      = [0.015] * 12
 # cal_mask      = [0.004, 0.006, 0.006] * 2 + [0.003, 0.006, 0.006] * 2 # Universal PWM:Radian Ratio
 # cal_mask      = [0.004] * 12
 # cal_mask      = [0.002, 0.006, 0.006] * 4
-cal_mask = [0.006, # Front left leg
+cal_mask = [0.005, # Front left leg
             0.006, # Front left shoulder
             0.006, # Front left knee
-            0.006, # Front right leg
+            0.004, # Front right leg
             0.006, # Front right shoulder
             0.006, # Front right knee
-            0.003, # Back left leg
+            0.0035, # Back left leg
             0.006, # Back left shoulder
-            0.006, # Back left knee
-            0.003, # Back right leg
+            0.008, # Back left knee
+            0.0035, # Back right leg
             0.006, # Back right shoulder
-            0.006] # Back right knee
+            0.008] # Back right knee
 
 direction = [False,  True, False,
              True, False, True,
@@ -123,8 +123,15 @@ def verify():
         assert delta == 0, 'Moving from initial position to initial position does not produce zero movement..'
 
 def communicate(socket, target):
-    for servo_i, setting in enumerate(target):
-        socket.send(b's ' + str(servo_i).encode('utf-8') + b' ' + str(setting).encode('utf-8') + b' \n')
+    byt = lambda x : str(x).encode('utf-8')
+    legs    = [(b'fl ', 0),
+               (b'fr ', 3),
+               (b'bl ', 6),
+               (b'br ', 9)]
+    for leg, i in legs:
+        command = leg + b' '.join(byt(target[i]) for i in range(i, i + 3)) + b'\n'
+        print(command)
+        socket.send(command)
 
 def rest_stand(i):
     if i % 2 == 0:
@@ -163,7 +170,6 @@ def main():
             # signal = copy_walk(i)
             # signal = copy_turn(i)
             # signal = rest(i)
-            signal = [0, -1.355 + 3.1415/2, 1.99 + 3.1415/2] * 4
 
             print(i)
             print(signal)
@@ -171,7 +177,7 @@ def main():
             print(target)
             communicate(socket, target)
             # sleep(0.001)
-            sleep(1)
+            sleep(3)
     finally:
         socket.close()
 
