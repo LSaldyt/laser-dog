@@ -64,7 +64,7 @@ class Net(nn.Module):
         self.pool = nn.MaxPool2d(2, 2)
         # linear layer (64 * 4 * 4 -> 500)
         self.fc1 = nn.Linear(64 * 4 * 4, 500)
-        # linear layer (500 -> 10)
+        # linear layer (500 -> 2)
         self.fc2 = nn.Linear(500, 2)
         # dropout layer (p=0.25)
         self.dropout = nn.Dropout(0.25)
