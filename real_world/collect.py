@@ -29,11 +29,10 @@ def main():
     buff = b''
     socket = initialize(address='3C:61:05:3D:EB:2A')
     try:
-        with open('raw_data.csv', 'w') as outfile:
-            outfile.write(headers)
+        with open('raw_data.csv', 'a') as outfile:
+            # outfile.write(headers)
             while True:
                 try:
-                    print('Receiving..')
                     buff += socket.recv(1024)
                     t = time()
                     result, buff = extract(buff)
@@ -41,9 +40,10 @@ def main():
                         print(line)
                         line = [t] + line
                         outfile.write(','.join(map(str, line)) + '\n')
-                    sleep(0.1)
                 except bluetooth.btcommon.BluetoothError:
                     pass
+                except KeyboardInterrupt:
+                    break
     finally:
         socket.close()
 
