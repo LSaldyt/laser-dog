@@ -1,4 +1,4 @@
-# Spot-Multiagent 
+# Laser following quadruped
 
 This project focuses on reinforcement learning challenges for the "Rex" spot-micro quadruped robot.
 
