@@ -3,6 +3,7 @@ from pyquaternion import Quaternion
 import numpy as np
 from pprint import pprint
 from math import degrees, atan2
+from datetime import datetime
 import os
 
 def from_file(fname):
@@ -48,7 +49,6 @@ def get_theta(gyr, acc):
             qw, qx, qy, qz = q.elements
             yaw = atan2(2.0*(qy*qz + qw*qx), qw*qw - qx*qx - qy*qy + qz*qz)
             theta.append(degrees(yaw))
-            print(degrees(yaw) - 77)
         except ValueError:
             pass
     return theta
@@ -59,9 +59,11 @@ def time_to_index(t_event, times):
             return i
     return -1
 
+def parse_time(filename):
+    datestr, i, ext = filename.replace('capture_', '').split('.')
+    return datetime.strptime(datestr, '%Y-%M-%d_%H-%M-%S'), int(i)
+
 def main():
-    FIRST = 196 - 1
-    DELTA = 0.1
     THETA_INIT = 77
 
     gyr, acc, t, d, l = from_file('pointer_data.csv')
@@ -73,7 +75,7 @@ def main():
     t_epoch = t_laser - DELTA * FIRST
     t_start = t_epoch - t[0]
 
-    images = os.listdir('images')
+    images = [im, parse_time(im) for im in os.listdir('images')]
 
     print(f'Calibrating sample data based on first laser image being image {FIRST}')
     print(f'This accounts for {diff} seconds of collection pre-laser')
@@ -83,7 +85,7 @@ def main():
 
     with open('labels.csv', 'w') as outfile:
         outfile.write('filename, time, theta, distance, laser\n')
-        for i, image in enumerate(sorted(images, key=lambda l : int(l.split('_')[1].split('.')[0]))):
+        for i, image in enumerate(sorted(images, key=lambda t : t[1])):
             im_time = t_epoch + DELTA * i
             im_index = time_to_index(im_time, t)
 
